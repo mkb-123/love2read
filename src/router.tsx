@@ -6,6 +6,7 @@ import { PickTheWord } from './screens/PickTheWord';
 import { PickThePicture } from './screens/PickThePicture';
 import { MatchPairs } from './screens/MatchPairs';
 import { Parents } from './screens/Parents';
+import { ManageDecks } from './screens/ManageDecks';
 
 export function Router() {
   return (
@@ -24,6 +25,7 @@ export function Router() {
         />
         <Route path="/deck/:levelId/:deckId/match" element={<MatchPairs />} />
         <Route path="/parents" element={<Parents />} />
+        <Route path="/manage" element={<ManageDecks />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </HashRouter>

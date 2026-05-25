@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { findDeck, LEVELS } from '../content';
+import { findDeck, getAllLevels } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { StarBurst } from '../components/StarBurst';
@@ -21,7 +21,7 @@ function buildChoices(target: Card, deck: { cards: Card[] }): Card[] {
   const pool = deck.cards.filter((c) => !!c.emoji && c.id !== target.id);
   let distractors = sample(pool, 2);
   if (distractors.length < 2) {
-    const others = LEVELS.flatMap((l) => l.decks.flatMap((d) => d.cards)).filter(
+    const others = getAllLevels().flatMap((l) => l.decks.flatMap((d) => d.cards)).filter(
       (c) =>
         !!c.emoji &&
         c.id !== target.id &&

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import { LEVELS } from '../content';
 import { useProgress } from '../hooks/useProgress';
 import { useChildName } from '../hooks/useChildName';
+import { useLevels } from '../hooks/useLevels';
 
 export function Home() {
   const { progress } = useProgress();
   const { displayName } = useChildName();
+  const { levels } = useLevels();
   return (
     <div className="min-h-dvh p-6 md:p-10 max-w-7xl mx-auto">
       <h1 className="text-5xl md:text-7xl font-extrabold text-slate-800 text-center mb-2">
@@ -15,7 +16,7 @@ export function Home() {
         Hello, {displayName}! Pick a deck.
       </p>
       <div className="space-y-12">
-        {LEVELS.map((level) => (
+        {levels.map((level) => (
           <section key={level.id}>
             <h2
               className={`text-3xl md:text-5xl font-extrabold mb-6 ${level.color}`}

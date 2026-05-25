@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { findDeck, LEVELS } from '../content';
+import { findDeck, getAllLevels } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
@@ -22,7 +22,7 @@ function buildChoices(target: Card, deck: { cards: Card[] }): Card[] {
   const distractorPool = deck.cards.filter((c) => c.id !== target.id);
   let distractors = sample(distractorPool, 2);
   if (distractors.length < 2) {
-    const others = LEVELS.flatMap((l) => l.decks.flatMap((d) => d.cards)).filter(
+    const others = getAllLevels().flatMap((l) => l.decks.flatMap((d) => d.cards)).filter(
       (c) => c.id !== target.id && !distractors.some((d) => d.id === c.id),
     );
     distractors = [...distractors, ...sample(others, 2 - distractors.length)];

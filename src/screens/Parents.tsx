@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { LEVELS } from '../content';
+import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { Button } from '../components/Button';
 import { useChildName } from '../hooks/useChildName';
+import { useLevels } from '../hooks/useLevels';
 import { useProgress } from '../hooks/useProgress';
 import { avgResponseTime, currentStreak, isDue } from '../lib/progress';
 import type { Box, Card, CardProgress, Deck } from '../lib/types';
@@ -164,6 +165,7 @@ function DeckStats({
 export function Parents() {
   const { name, save } = useChildName();
   const { progress, reset, setManual } = useProgress();
+  const { levels } = useLevels();
   const [input, setInput] = useState(name);
   const [savedFlash, setSavedFlash] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -177,7 +179,7 @@ export function Parents() {
     let learning = 0;
     let fresh = 0;
     let totalCards = 0;
-    for (const level of LEVELS) {
+    for (const level of levels) {
       for (const deck of level.decks) {
         for (const card of deck.cards) {
           totalCards += 1;
@@ -194,7 +196,7 @@ export function Parents() {
       }
     }
     return { seen, correct, mastered, learning, fresh, totalCards };
-  }, [progress]);
+  }, [progress, levels]);
 
   const onSave = () => {
     save(input);
@@ -205,9 +207,17 @@ export function Parents() {
   return (
     <Layout>
       <div className="flex-1 flex flex-col p-6 md:p-10 max-w-4xl mx-auto w-full gap-6">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-800">
-          For Parents
-        </h1>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-800">
+            For Parents
+          </h1>
+          <Link
+            to="/manage"
+            className="text-lg px-4 py-2 rounded-2xl bg-violet-500 text-white font-bold shadow-lg active:scale-95 transition-transform"
+          >
+            ✏️ Manage decks
+          </Link>
+        </div>
 
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl p-4 md:p-6 shadow-lg">
@@ -256,7 +266,7 @@ export function Parents() {
         <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mt-2">
           Decks
         </h2>
-        {LEVELS.flatMap((l) => l.decks).map((deck) => (
+        {levels.flatMap((l) => l.decks).map((deck) => (
           <DeckStats
             key={deck.id}
             deck={deck}
