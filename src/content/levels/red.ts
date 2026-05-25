@@ -10,7 +10,7 @@ const PREFIX = 'red';
 
 export const red: Level = {
   id: 'red',
-  label: 'Red',
+  label: 'Stage 2',
   order: 1,
   color: 'text-red-500',
   decks: [
