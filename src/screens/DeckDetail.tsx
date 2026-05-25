@@ -42,13 +42,16 @@ export function DeckDetail() {
             onClick={() => nav(`${base}/flashcards`)}
             className="bg-rose-500 text-white"
           >
-            📖 Flashcards
+            📖 Read together
           </Button>
+          <p className="text-slate-500 text-center text-base md:text-lg -mt-2">
+            Tests below — these update her progress
+          </p>
           <Button
             onClick={() => nav(`${base}/pick`)}
             className="bg-amber-500 text-white"
           >
-            👉 Pick the Word
+            🎯 Pick the Word
           </Button>
           <Button
             onClick={() => nav(`${base}/match`)}
