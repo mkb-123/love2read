@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Fredoka', 'Baloo 2', system-ui, sans-serif;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fed7aa 100%);
+    background-attachment: fixed;
+    min-height: 100dvh;
+    color: #1e293b;
+  }
+
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
