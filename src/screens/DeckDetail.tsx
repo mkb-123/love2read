@@ -59,12 +59,6 @@ export function DeckDetail() {
           >
             🖼️ Pick the Picture
           </Button>
-          <Button
-            onClick={() => nav(`${base}/match`)}
-            className="bg-emerald-500 text-white"
-          >
-            🃏 Match Pairs
-          </Button>
         </div>
       </div>
     </Layout>

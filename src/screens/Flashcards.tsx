@@ -107,10 +107,10 @@ export function Flashcards() {
                 👉 Pick the Word
               </Button>
               <Button
-                onClick={() => nav(`${base}/match`)}
-                className="bg-emerald-500 text-white"
+                onClick={() => nav(`${base}/pick-picture`)}
+                className="bg-orange-500 text-white"
               >
-                🃏 Match Pairs
+                🖼️ Pick the Picture
               </Button>
               <Button onClick={restart} className="bg-sky-500 text-white">
                 🔁 Read again

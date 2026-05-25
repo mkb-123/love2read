@@ -4,7 +4,6 @@ import { DeckDetail } from './screens/DeckDetail';
 import { Flashcards } from './screens/Flashcards';
 import { PickTheWord } from './screens/PickTheWord';
 import { PickThePicture } from './screens/PickThePicture';
-import { MatchPairs } from './screens/MatchPairs';
 import { Parents } from './screens/Parents';
 import { ManageDecks } from './screens/ManageDecks';
 
@@ -23,7 +22,6 @@ export function Router() {
           path="/deck/:levelId/:deckId/pick-picture"
           element={<PickThePicture />}
         />
-        <Route path="/deck/:levelId/:deckId/match" element={<MatchPairs />} />
         <Route path="/parents" element={<Parents />} />
         <Route path="/manage" element={<ManageDecks />} />
         <Route path="*" element={<Home />} />
