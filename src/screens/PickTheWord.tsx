@@ -7,7 +7,7 @@ import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
-import { shuffle, sample } from '../lib/random';
+import { shuffle } from '../lib/random';
 import type { Card } from '../lib/types';
 
 function buildRounds(cards: Card[]): Card[] {
@@ -15,15 +15,27 @@ function buildRounds(cards: Card[]): Card[] {
 }
 
 function buildChoices(target: Card, deck: { cards: Card[] }): Card[] {
-  const distractorPool = deck.cards.filter((c) => c.id !== target.id);
-  let distractors = sample(distractorPool, 2);
-  if (distractors.length < 2) {
-    const others = getAllLevels().flatMap((l) => l.decks.flatMap((d) => d.cards)).filter(
-      (c) => c.id !== target.id && !distractors.some((d) => d.id === c.id),
-    );
-    distractors = [...distractors, ...sample(others, 2 - distractors.length)];
+  const usedWords = new Set<string>([target.word]);
+  const picked: Card[] = [];
+
+  for (const c of shuffle(deck.cards)) {
+    if (picked.length >= 2) break;
+    if (!usedWords.has(c.word)) {
+      picked.push(c);
+      usedWords.add(c.word);
+    }
   }
-  return shuffle([target, ...distractors]);
+  if (picked.length < 2) {
+    const all = getAllLevels().flatMap((l) => l.decks.flatMap((d) => d.cards));
+    for (const c of shuffle(all)) {
+      if (picked.length >= 2) break;
+      if (!usedWords.has(c.word)) {
+        picked.push(c);
+        usedWords.add(c.word);
+      }
+    }
+  }
+  return shuffle([target, ...picked]);
 }
 
 export function PickTheWord() {
