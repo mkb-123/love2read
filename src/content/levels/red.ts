@@ -1,125 +1,35 @@
 import type { Level } from '../../lib/types';
 
-// Sourced from the Oxford Reading Tree Word Sparks Vocabulary & Phonics chart
-// (Reception / Primary 1). Red book band = Oxford Level 2 = Letters & Sounds
-// Phase 3. The four decks below mirror the chart's progression:
-//   Set 6 (j, v, w, x) -> Set 7 (y, z, qu) -> consonant digraphs (ch, sh, th, ng)
-//   plus the tricky words introduced at this level (he, she, we, me, be).
-// Decodable words and character names are taken from the Red A/B/C books in
-// the chart -- nothing here is invented.
+// Words my daughter is actually being taught at red book band.
+// Not pulled from one specific synthetic-phonics scheme -- her school's mix
+// of high-frequency words, colour words and themed book vocabulary. Extend
+// freely; the in-app deck editor (coming next) writes to localStorage but the
+// canonical seed list lives here.
 
 const PREFIX = 'red';
 
 export const red: Level = {
   id: 'red',
-  label: 'Red — Stage 2 (Phase 3)',
+  label: 'Red',
   order: 1,
   color: 'text-red-500',
   decks: [
     {
-      id: 'set6',
-      title: 'Set 6: j v w x',
-      description: 'New sounds: j, v, w, x',
-      emoji: '🫙',
+      id: 'her-words',
+      title: 'Her Words',
+      description: 'The words she is learning right now',
+      emoji: '💖',
       color: 'bg-rose-500',
       cards: [
-        { word: 'j', emoji: '🫙', hint: 'jam' },
-        { word: 'v', emoji: '🚐', hint: 'van' },
-        { word: 'w', emoji: '🕸️', hint: 'web' },
-        { word: 'x', emoji: '📦', hint: 'box' },
-        { word: 'jam', emoji: '🫙' },
-        { word: 'jacket', emoji: '🧥' },
-        { word: 'Jan' },
-        { word: 'Jess' },
-        { word: 'van', emoji: '🚐' },
-        { word: 'Viv' },
-        { word: 'Avril' },
-        { word: 'will' },
-        { word: 'well' },
-        { word: 'went' },
-        { word: 'twins', emoji: '👯' },
-        { word: 'Webb' },
-        { word: 'box', emoji: '📦' },
-        { word: 'six', emoji: '6️⃣' },
-        { word: 'next' },
-      ].map((c) => ({ ...c, id: `${PREFIX}.set6.${c.word}` })),
-    },
-    {
-      id: 'set7',
-      title: 'Set 7: y z qu',
-      description: 'New sounds: y, z, qu',
-      emoji: '👑',
-      color: 'bg-amber-500',
-      cards: [
-        { word: 'y', emoji: '🪀', hint: 'yoyo' },
-        { word: 'z', emoji: '🦓', hint: 'zebra' },
-        { word: 'qu', emoji: '👑', hint: 'queen' },
-        { word: 'yes', emoji: '✅' },
-        { word: 'yap' },
-        { word: 'yell' },
-        { word: 'zip', emoji: '🤐' },
-        { word: 'Zac' },
-        { word: 'Zip' },
-        { word: 'Liz' },
-        { word: 'Fizz' },
-        { word: 'buzz', emoji: '🐝' },
-        { word: 'Quinn' },
-        { word: 'quick', emoji: '⚡' },
-        { word: 'quit' },
-        { word: 'quack', emoji: '🦆' },
-      ].map((c) => ({ ...c, id: `${PREFIX}.set7.${c.word}` })),
-    },
-    {
-      id: 'digraphs',
-      title: 'Digraphs: ch sh th ng',
-      description: 'Two letters, one sound',
-      emoji: '🍒',
-      color: 'bg-emerald-500',
-      cards: [
-        { word: 'ch', emoji: '🍒', hint: 'cherry' },
-        { word: 'sh', emoji: '🦈', hint: 'shark' },
-        { word: 'th', emoji: '🦷', hint: 'tooth' },
-        { word: 'ng', emoji: '💍', hint: 'ring' },
-        { word: 'chickens', emoji: '🐔' },
-        { word: 'chips', emoji: '🍟' },
-        { word: 'check', emoji: '✔️' },
-        { word: 'Chen' },
-        { word: 'munch' },
-        { word: 'bunch' },
-        { word: 'fish', emoji: '🐟' },
-        { word: 'shell', emoji: '🐚' },
-        { word: 'wish', emoji: '⭐' },
-        { word: 'shut' },
-        { word: 'dash' },
-        { word: 'splash', emoji: '💦' },
-        { word: 'this' },
-        { word: 'that' },
-        { word: 'then' },
-        { word: 'them' },
-        { word: 'with' },
-        { word: 'thick' },
-        { word: 'thin' },
-        { word: 'thing' },
-        { word: 'Beth' },
-        { word: 'ring', emoji: '💍' },
-        { word: 'strong', emoji: '💪' },
-        { word: 'long', emoji: '📏' },
-        { word: 'bring' },
-      ].map((c) => ({ ...c, id: `${PREFIX}.digraphs.${c.word}` })),
-    },
-    {
-      id: 'tricky',
-      title: 'Tricky Words',
-      description: 'Sight words at red level',
-      emoji: '✨',
-      color: 'bg-sky-500',
-      cards: [
-        { word: 'he' },
-        { word: 'she' },
-        { word: 'we' },
-        { word: 'me' },
-        { word: 'be' },
-      ].map((c) => ({ ...c, id: `${PREFIX}.tricky.${c.word}` })),
+        { word: 'the' },
+        { word: 'and' },
+        { word: 'cat', emoji: '🐱' },
+        { word: 'black', emoji: '⬛' },
+        { word: 'blue', emoji: '🟦' },
+        { word: 'pirate', emoji: '🏴‍☠️' },
+        { word: 'monster', emoji: '👹' },
+        { word: 'kangaroo', emoji: '🦘' },
+      ].map((c) => ({ ...c, id: `${PREFIX}.her-words.${c.word}` })),
     },
   ],
 };
