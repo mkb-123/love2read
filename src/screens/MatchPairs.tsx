@@ -119,30 +119,54 @@ export function MatchPairs() {
                 key={t.key}
                 onClick={() => onTap(t)}
                 disabled={isMatched}
-                className={`aspect-square rounded-3xl shadow-lg flex items-center justify-center active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-4 focus:ring-yellow-300 ${
-                  isMatched
-                    ? 'bg-emerald-200'
-                    : isFlipped
-                    ? 'bg-white'
-                    : 'bg-sky-400 hover:bg-sky-500'
-                }`}
+                className="aspect-square rounded-3xl active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                style={{ perspective: '800px' }}
                 aria-label={isFlipped ? t.word : 'hidden card'}
               >
-                {isFlipped ? (
-                  <motion.span
-                    initial={{ rotateY: 180, opacity: 0 }}
-                    animate={{ rotateY: 0, opacity: 1 }}
-                    className={
-                      t.face === 'emoji'
-                        ? 'text-6xl md:text-8xl leading-none'
-                        : 'text-4xl md:text-6xl font-extrabold text-slate-800 leading-none'
-                    }
+                <motion.div
+                  animate={{ rotateY: isFlipped ? 180 : 0 }}
+                  transition={{ duration: 0.4 }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                    transformStyle: 'preserve-3d',
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                    }}
+                    className="rounded-3xl shadow-lg bg-sky-400 flex items-center justify-center"
                   >
-                    {t.face === 'emoji' ? t.emoji : t.word}
-                  </motion.span>
-                ) : (
-                  <span className="text-5xl md:text-7xl text-white opacity-70">?</span>
-                )}
+                    <span className="text-5xl md:text-7xl text-white opacity-70">?</span>
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)',
+                    }}
+                    className={`rounded-3xl shadow-lg flex items-center justify-center ${
+                      isMatched ? 'bg-emerald-200' : 'bg-white'
+                    }`}
+                  >
+                    <span
+                      className={
+                        t.face === 'emoji'
+                          ? 'text-6xl md:text-8xl leading-none'
+                          : 'text-4xl md:text-6xl font-extrabold text-slate-800 leading-none'
+                      }
+                    >
+                      {t.face === 'emoji' ? t.emoji : t.word}
+                    </span>
+                  </div>
+                </motion.div>
               </button>
             );
           })}

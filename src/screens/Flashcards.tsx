@@ -75,7 +75,7 @@ export function Flashcards() {
                 transition={{ duration: 0.25 }}
                 className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl"
               >
-                <CardFace card={current} />
+                <CardFace card={current} mode="word" />
               </motion.div>
             )}
           </AnimatePresence>
