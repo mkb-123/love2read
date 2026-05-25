@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { useChildName } from '../hooks/useChildName';
 import { useProgress } from '../hooks/useProgress';
 import { avgResponseTime, currentStreak, isDue } from '../lib/progress';
-import type { Card, CardProgress, Deck } from '../lib/types';
+import type { Box, Card, CardProgress, Deck } from '../lib/types';
 
 function classify(p: CardProgress | undefined): 'new' | 'learning' | 'mastered' {
   if (!p || p.box === 0) return 'new';
@@ -26,7 +26,15 @@ function whenDue(p: CardProgress | undefined): string {
   return days === 1 ? 'tomorrow' : `in ${days} days`;
 }
 
-function DeckStats({ deck, progress }: { deck: Deck; progress: Record<string, CardProgress> }) {
+function DeckStats({
+  deck,
+  progress,
+  onSetBox,
+}: {
+  deck: Deck;
+  progress: Record<string, CardProgress>;
+  onSetBox: (id: string, box: Box) => void;
+}) {
   const [open, setOpen] = useState(false);
   const stats = useMemo(() => {
     const groups = { new: 0, learning: 0, mastered: 0 };
@@ -79,6 +87,7 @@ function DeckStats({ deck, progress }: { deck: Deck; progress: Record<string, Ca
                 <th className="py-2 pr-4">Correct</th>
                 <th className="py-2 pr-4">Avg time</th>
                 <th className="py-2 pr-4">Next due</th>
+                <th className="py-2 pr-4">Mark</th>
               </tr>
             </thead>
             <tbody>
@@ -113,6 +122,34 @@ function DeckStats({ deck, progress }: { deck: Deck; progress: Record<string, Ca
                     <td className="py-2 pr-4 text-slate-700">
                       {due ? <span className="text-rose-600">now</span> : whenDue(p)}
                     </td>
+                    <td className="py-2 pr-4">
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          aria-label="mark new"
+                          onClick={() => onSetBox(c.id, 0)}
+                          className="px-2 py-1 text-xs rounded bg-slate-100 hover:bg-slate-200 text-slate-700"
+                        >
+                          New
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="mark practising"
+                          onClick={() => onSetBox(c.id, 2)}
+                          className="px-2 py-1 text-xs rounded bg-amber-100 hover:bg-amber-200 text-amber-800"
+                        >
+                          Practising
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="mark known"
+                          onClick={() => onSetBox(c.id, 6)}
+                          className="px-2 py-1 text-xs rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800"
+                        >
+                          Knows
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -126,7 +163,7 @@ function DeckStats({ deck, progress }: { deck: Deck; progress: Record<string, Ca
 
 export function Parents() {
   const { name, save } = useChildName();
-  const { progress, reset } = useProgress();
+  const { progress, reset, setManual } = useProgress();
   const [input, setInput] = useState(name);
   const [savedFlash, setSavedFlash] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -220,7 +257,12 @@ export function Parents() {
           Decks
         </h2>
         {LEVELS.flatMap((l) => l.decks).map((deck) => (
-          <DeckStats key={deck.id} deck={deck} progress={progress} />
+          <DeckStats
+            key={deck.id}
+            deck={deck}
+            progress={progress}
+            onSetBox={(id, box) => setManual(id, box)}
+          />
         ))}
 
         <section className="bg-white rounded-3xl p-6 md:p-8 shadow-lg">

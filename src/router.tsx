@@ -3,6 +3,7 @@ import { Home } from './screens/Home';
 import { DeckDetail } from './screens/DeckDetail';
 import { Flashcards } from './screens/Flashcards';
 import { PickTheWord } from './screens/PickTheWord';
+import { PickThePicture } from './screens/PickThePicture';
 import { MatchPairs } from './screens/MatchPairs';
 import { Parents } from './screens/Parents';
 
@@ -17,6 +18,10 @@ export function Router() {
           element={<Flashcards />}
         />
         <Route path="/deck/:levelId/:deckId/pick" element={<PickTheWord />} />
+        <Route
+          path="/deck/:levelId/:deckId/pick-picture"
+          element={<PickThePicture />}
+        />
         <Route path="/deck/:levelId/:deckId/match" element={<MatchPairs />} />
         <Route path="/parents" element={<Parents />} />
         <Route path="*" element={<Home />} />

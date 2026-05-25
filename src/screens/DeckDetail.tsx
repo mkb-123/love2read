@@ -54,6 +54,12 @@ export function DeckDetail() {
             🎯 Pick the Word
           </Button>
           <Button
+            onClick={() => nav(`${base}/pick-picture`)}
+            className="bg-orange-500 text-white"
+          >
+            🖼️ Pick the Picture
+          </Button>
+          <Button
             onClick={() => nav(`${base}/match`)}
             className="bg-emerald-500 text-white"
           >

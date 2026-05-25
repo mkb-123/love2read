@@ -7,8 +7,9 @@ import {
   recordActiveDay,
   resetProgress,
   saveProgress,
+  setBox,
 } from '../lib/progress';
-import type { ProgressMap } from '../lib/types';
+import type { Box, ProgressMap } from '../lib/types';
 
 export function useProgress() {
   const [progress, setProgress] = useState<ProgressMap>(() => loadProgress());
@@ -40,5 +41,9 @@ export function useProgress() {
     setProgress({});
   }, []);
 
-  return { progress, correct, wrong, seen, reset };
+  const setManual = useCallback((id: string, box: Box) => {
+    setProgress((p) => setBox(p, id, box));
+  }, []);
+
+  return { progress, correct, wrong, seen, reset, setManual };
 }

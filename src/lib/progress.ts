@@ -112,6 +112,19 @@ export function markWrong(
   };
 }
 
+export function setBox(p: ProgressMap, id: string, box: Box): ProgressMap {
+  const cur = p[id] ?? EMPTY;
+  const now = new Date();
+  return {
+    ...p,
+    [id]: bump(cur, {
+      box,
+      nextDue: dueDate(box, now),
+      lastSeen: now.toISOString(),
+    }),
+  };
+}
+
 export function markSeen(p: ProgressMap, id: string): ProgressMap {
   const cur = p[id] ?? EMPTY;
   const now = new Date();
