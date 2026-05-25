@@ -29,11 +29,15 @@ export function Home() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {level.decks.map((deck) => {
-                  const done = deck.cards.filter(
-                    (c) => (progress[c.id]?.known ?? 0) > 0,
+                  const mastered = deck.cards.filter(
+                    (c) => (progress[c.id]?.box ?? 0) >= 5,
                   ).length;
+                  const learning = deck.cards.filter((c) => {
+                    const b = progress[c.id]?.box ?? 0;
+                    return b >= 1 && b < 5;
+                  }).length;
                   const total = deck.cards.length;
-                  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+                  const pct = total === 0 ? 0 : Math.round((mastered / total) * 100);
                   return (
                     <Link
                       key={deck.id}
@@ -54,7 +58,7 @@ export function Home() {
                         />
                       </div>
                       <div className="text-base md:text-lg mt-2 opacity-90">
-                        {done} / {total} known
+                        {mastered} mastered · {learning} learning · {total} total
                       </div>
                     </Link>
                   );

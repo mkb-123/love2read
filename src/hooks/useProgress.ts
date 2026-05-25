@@ -1,26 +1,38 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   loadProgress,
-  markKnown,
+  markCorrect,
   markSeen,
+  markWrong,
+  recordActiveDay,
   resetProgress,
   saveProgress,
-  type Progress,
 } from '../lib/progress';
+import type { ProgressMap } from '../lib/types';
 
 export function useProgress() {
-  const [progress, setProgress] = useState<Progress>(() => loadProgress());
+  const [progress, setProgress] = useState<ProgressMap>(() => loadProgress());
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  const seen = useCallback((id: string) => {
-    setProgress((p) => markSeen(p, id));
+  const correct = useCallback(
+    (id: string, opts?: { elapsedMs?: number; weight?: 1 | 2 }) => {
+      recordActiveDay();
+      setProgress((p) => markCorrect(p, id, opts));
+    },
+    [],
+  );
+
+  const wrong = useCallback((id: string, opts?: { elapsedMs?: number }) => {
+    recordActiveDay();
+    setProgress((p) => markWrong(p, id, opts));
   }, []);
 
-  const known = useCallback((id: string) => {
-    setProgress((p) => markKnown(p, id));
+  const seen = useCallback((id: string) => {
+    recordActiveDay();
+    setProgress((p) => markSeen(p, id));
   }, []);
 
   const reset = useCallback(() => {
@@ -28,5 +40,5 @@ export function useProgress() {
     setProgress({});
   }, []);
 
-  return { progress, seen, known, reset };
+  return { progress, correct, wrong, seen, reset };
 }

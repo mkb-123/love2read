@@ -2,32 +2,35 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { findDeck } from '../content';
+import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { CardFace } from '../components/CardFace';
 import { Button } from '../components/Button';
 import { StarBurst } from '../components/StarBurst';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
-import { useShuffle } from '../hooks/useShuffle';
+import { shuffle } from '../lib/random';
 
 export function Flashcards() {
   const { levelId, deckId } = useParams<{ levelId: string; deckId: string }>();
   const nav = useNavigate();
   const { deck } = findDeck(levelId ?? '', deckId ?? '');
+  const { progress, correct, wrong } = useProgress();
   const [seed, setSeed] = useState(0);
-  const order = useShuffle(deck?.cards ?? [], seed);
+
+  const order = useMemo(() => {
+    if (!deck) return [];
+    const ids = selectSession(
+      deck.cards.map((c) => c.id),
+      progress,
+    );
+    const idSet = new Set(ids);
+    return shuffle(deck.cards.filter((c) => idSet.has(c.id)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deck, seed]);
+
   const [index, setIndex] = useState(0);
   const [burst, setBurst] = useState(false);
-  const { progress, seen, known } = useProgress();
-
-  const current = order[index];
-  const done = index >= order.length;
-
-  const learnedCount = useMemo(
-    () =>
-      (deck?.cards ?? []).filter((c) => (progress[c.id]?.known ?? 0) > 0).length,
-    [deck, progress],
-  );
 
   if (!deck) {
     return (
@@ -37,9 +40,12 @@ export function Flashcards() {
     );
   }
 
+  const current = order[index];
+  const done = index >= order.length;
+
   const handleKnow = () => {
     if (!current) return;
-    known(current.id);
+    correct(current.id);
     setBurst(true);
     window.setTimeout(() => setBurst(false), 900);
     setIndex((i) => i + 1);
@@ -47,7 +53,7 @@ export function Flashcards() {
 
   const handleTryAgain = () => {
     if (!current) return;
-    seen(current.id);
+    wrong(current.id);
     setIndex((i) => i + 1);
   };
 
@@ -62,9 +68,6 @@ export function Flashcards() {
         <div className="flex justify-between items-center text-slate-600 text-xl md:text-2xl mb-4">
           <span>
             {Math.min(index + 1, order.length)} / {order.length}
-          </span>
-          <span className="font-bold text-emerald-600">
-            ⭐ {learnedCount}
           </span>
         </div>
         <div className="flex-1 flex items-center justify-center relative">

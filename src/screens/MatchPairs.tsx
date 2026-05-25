@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { findDeck } from '../content';
+import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { StarBurst } from '../components/StarBurst';
 import { Celebration } from '../components/Celebration';
@@ -33,13 +34,24 @@ export function MatchPairs() {
   const { levelId, deckId } = useParams<{ levelId: string; deckId: string }>();
   const nav = useNavigate();
   const { deck } = findDeck(levelId ?? '', deckId ?? '');
+  const { progress, correct } = useProgress();
   const [seed, setSeed] = useState(0);
-  const tiles = useMemo(() => (deck ? buildTiles(deck.cards) : []), [deck, seed]);
+
+  const tiles = useMemo(() => {
+    if (!deck) return [];
+    const ids = selectSession(
+      deck.cards.map((c) => c.id),
+      progress,
+      { sessionSize: PAIR_COUNT, newPerSession: 2 },
+    );
+    const idSet = new Set(ids);
+    return buildTiles(deck.cards.filter((c) => idSet.has(c.id)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deck, seed]);
 
   const [flipped, setFlipped] = useState<string[]>([]);
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [burst, setBurst] = useState(false);
-  const { known } = useProgress();
 
   useEffect(() => {
     if (flipped.length !== 2) return;
@@ -47,7 +59,7 @@ export function MatchPairs() {
     const a = tiles.find((t) => t.key === aKey);
     const b = tiles.find((t) => t.key === bKey);
     if (a && b && a.cardId === b.cardId && a.face !== b.face) {
-      known(a.cardId);
+      correct(a.cardId);
       setMatched((m) => new Set(m).add(a.cardId));
       setBurst(true);
       window.setTimeout(() => setBurst(false), 700);
@@ -56,7 +68,7 @@ export function MatchPairs() {
       const t = window.setTimeout(() => setFlipped([]), 900);
       return () => window.clearTimeout(t);
     }
-  }, [flipped, tiles, known]);
+  }, [flipped, tiles, correct]);
 
   if (!deck) {
     return (

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { findDeck, LEVELS } from '../content';
+import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
 import { StarBurst } from '../components/StarBurst';
@@ -12,9 +13,9 @@ import type { Card } from '../lib/types';
 
 const ROUNDS = 8;
 
-function buildRounds(deck: { cards: Card[] }): Card[] {
-  const withEmoji = deck.cards.filter((c) => !!c.emoji);
-  const pool = withEmoji.length >= 3 ? withEmoji : deck.cards;
+function buildRounds(cards: Card[]): Card[] {
+  const withEmoji = cards.filter((c) => !!c.emoji);
+  const pool = withEmoji.length >= 3 ? withEmoji : cards;
   return shuffle(pool).slice(0, Math.min(ROUNDS, pool.length));
 }
 
@@ -34,22 +35,37 @@ export function PickTheWord() {
   const { levelId, deckId } = useParams<{ levelId: string; deckId: string }>();
   const nav = useNavigate();
   const { deck } = findDeck(levelId ?? '', deckId ?? '');
+  const { progress, correct, wrong } = useProgress();
   const [seed, setSeed] = useState(0);
-  const rounds = useMemo(
-    () => (deck ? buildRounds(deck) : []),
-    [deck, seed],
-  );
+
+  const rounds = useMemo(() => {
+    if (!deck) return [];
+    const ids = selectSession(
+      deck.cards.map((c) => c.id),
+      progress,
+    );
+    const idSet = new Set(ids);
+    const eligible = deck.cards.filter((c) => idSet.has(c.id));
+    return buildRounds(eligible);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deck, seed]);
+
   const [roundIdx, setRoundIdx] = useState(0);
   const [wrongId, setWrongId] = useState<string | null>(null);
   const [burst, setBurst] = useState(false);
   const [streak, setStreak] = useState(0);
-  const { known, seen } = useProgress();
+  const shownAt = useRef<number>(Date.now());
 
   const current = rounds[roundIdx];
   const choices = useMemo(
     () => (current && deck ? buildChoices(current, deck) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [current, deck, seed],
   );
+
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, [roundIdx]);
 
   useEffect(() => {
     if (wrongId) {
@@ -68,8 +84,9 @@ export function PickTheWord() {
 
   const handlePick = (c: Card) => {
     if (!current) return;
+    const elapsedMs = Date.now() - shownAt.current;
     if (c.id === current.id) {
-      known(current.id);
+      correct(current.id, { elapsedMs });
       setStreak((s) => s + 1);
       setBurst(true);
       window.setTimeout(() => {
@@ -77,7 +94,7 @@ export function PickTheWord() {
         setRoundIdx((i) => i + 1);
       }, 700);
     } else {
-      seen(c.id);
+      wrong(current.id, { elapsedMs });
       setStreak(0);
       setWrongId(c.id);
     }
@@ -98,9 +115,7 @@ export function PickTheWord() {
           <span>
             {Math.min(roundIdx + 1, rounds.length)} / {rounds.length}
           </span>
-          <span className="font-bold text-orange-600">
-            🔥 {streak}
-          </span>
+          <span className="font-bold text-orange-600">🔥 {streak}</span>
         </div>
         {!done && current && (
           <>

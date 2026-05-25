@@ -23,3 +23,16 @@ export interface Level {
   color: string;
   decks: Deck[];
 }
+
+export type Box = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface CardProgress {
+  seen: number;
+  correct: number;
+  box: Box;
+  nextDue: string;
+  lastSeen: string;
+  recentTimes: number[];
+}
+
+export type ProgressMap = Record<string, CardProgress>;
