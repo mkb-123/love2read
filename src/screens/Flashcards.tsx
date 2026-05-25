@@ -11,7 +11,10 @@ import { shuffle } from '../lib/random';
 export function Flashcards() {
   const { levelId, deckId } = useParams<{ levelId: string; deckId: string }>();
   const nav = useNavigate();
-  const { deck } = findDeck(levelId ?? '', deckId ?? '');
+  const { deck } = useMemo(
+    () => findDeck(levelId ?? '', deckId ?? ''),
+    [levelId, deckId],
+  );
   const { seen } = useProgress();
   const [seed, setSeed] = useState(0);
 
