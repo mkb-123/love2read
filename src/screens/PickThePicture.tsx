@@ -4,17 +4,13 @@ import { motion } from 'framer-motion';
 import { findDeck, getAllLevels } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
-import { StarBurst } from '../components/StarBurst';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
 import { shuffle, sample } from '../lib/random';
 import type { Card } from '../lib/types';
 
-const ROUNDS = 8;
-
 function buildRounds(cards: Card[]): Card[] {
-  const withEmoji = cards.filter((c) => !!c.emoji);
-  return shuffle(withEmoji).slice(0, Math.min(ROUNDS, withEmoji.length));
+  return shuffle(cards.filter((c) => !!c.emoji));
 }
 
 function buildChoices(target: Card, deck: { cards: Card[] }): Card[] {
@@ -44,6 +40,7 @@ export function PickThePicture() {
     const ids = selectSession(
       deck.cards.map((c) => c.id),
       progress,
+      { sessionSize: deck.cards.length, newPerSession: deck.cards.length },
     );
     const idSet = new Set(ids);
     const eligible = deck.cards.filter((c) => idSet.has(c.id) && !!c.emoji);
@@ -53,7 +50,6 @@ export function PickThePicture() {
 
   const [roundIdx, setRoundIdx] = useState(0);
   const [wrongId, setWrongId] = useState<string | null>(null);
-  const [burst, setBurst] = useState(false);
   const [streak, setStreak] = useState(0);
   const shownAt = useRef<number>(Date.now());
 
@@ -101,11 +97,7 @@ export function PickThePicture() {
     if (c.id === current.id) {
       correct(current.id, { elapsedMs });
       setStreak((s) => s + 1);
-      setBurst(true);
-      window.setTimeout(() => {
-        setBurst(false);
-        setRoundIdx((i) => i + 1);
-      }, 700);
+      setRoundIdx((i) => i + 1);
     } else {
       wrong(current.id, { elapsedMs });
       setStreak(0);
@@ -143,7 +135,6 @@ export function PickThePicture() {
                   {current.word}
                 </div>
               </motion.div>
-              {burst && <StarBurst />}
             </div>
             <div className="grid grid-cols-3 gap-3 md:gap-4 mt-8">
               {choices.map((c) => (

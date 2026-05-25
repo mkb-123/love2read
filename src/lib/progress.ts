@@ -1,3 +1,4 @@
+import { shuffle } from './random';
 import type { Box, CardProgress, ProgressMap } from './types';
 
 const KEY = 'love2read.progress.v2';
@@ -226,10 +227,22 @@ export function selectSession(
     }
   }
   due.sort((a, b) => (progress[a]?.box ?? 0) - (progress[b]?.box ?? 0));
+  const shuffledFresh = shuffle(fresh);
 
-  const newPick = fresh.slice(0, maxNew);
-  const combined = [...due, ...newPick].slice(0, size);
-  return combined.length === 0 ? cardIds.slice(0, size) : combined;
+  const newPick = shuffledFresh.slice(0, maxNew);
+  const combined = [...due, ...newPick];
+
+  if (combined.length < size) {
+    const used = new Set(combined);
+    const leftoverFresh = shuffledFresh.filter((id) => !used.has(id));
+    combined.push(...leftoverFresh);
+  }
+  if (combined.length < size) {
+    const used = new Set(combined);
+    const leftover = shuffle(cardIds.filter((id) => !used.has(id)));
+    combined.push(...leftover);
+  }
+  return combined.slice(0, size);
 }
 
 export function avgResponseTime(p: CardProgress | undefined): number | null {

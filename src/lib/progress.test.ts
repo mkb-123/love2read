@@ -75,4 +75,21 @@ describe('progress', () => {
     expect(session.length).toBeLessThanOrEqual(4);
     expect(session.length).toBeGreaterThan(0);
   });
+
+  it('selectSession fills up to sessionSize when fresh cards exceed newPerSession', () => {
+    const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
+    const session = selectSession(ids, {}, { sessionSize: 5, newPerSession: 2 });
+    expect(session.length).toBe(5);
+  });
+
+  it('selectSession eventually visits every fresh card across sessions', () => {
+    const ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const seen = new Set<string>();
+    for (let i = 0; i < 50; i++) {
+      const session = selectSession(ids, {}, { sessionSize: 3, newPerSession: 2 });
+      session.forEach((id) => seen.add(id));
+      if (seen.size === ids.length) break;
+    }
+    expect(seen.size).toBe(ids.length);
+  });
 });

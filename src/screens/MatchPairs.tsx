@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { findDeck } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
-import { StarBurst } from '../components/StarBurst';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
 import { shuffle } from '../lib/random';
@@ -42,7 +41,7 @@ export function MatchPairs() {
     const ids = selectSession(
       deck.cards.map((c) => c.id),
       progress,
-      { sessionSize: PAIR_COUNT, newPerSession: 2 },
+      { sessionSize: PAIR_COUNT, newPerSession: deck.cards.length },
     );
     const idSet = new Set(ids);
     return buildTiles(deck.cards.filter((c) => idSet.has(c.id)));
@@ -51,7 +50,6 @@ export function MatchPairs() {
 
   const [flipped, setFlipped] = useState<string[]>([]);
   const [matched, setMatched] = useState<Set<string>>(new Set());
-  const [burst, setBurst] = useState(false);
 
   useEffect(() => {
     if (flipped.length !== 2) return;
@@ -61,8 +59,6 @@ export function MatchPairs() {
     if (a && b && a.cardId === b.cardId && a.face !== b.face) {
       correct(a.cardId);
       setMatched((m) => new Set(m).add(a.cardId));
-      setBurst(true);
-      window.setTimeout(() => setBurst(false), 700);
       setFlipped([]);
     } else {
       const t = window.setTimeout(() => setFlipped([]), 900);
@@ -150,7 +146,6 @@ export function MatchPairs() {
               </button>
             );
           })}
-          {burst && <StarBurst count={6} />}
         </div>
         <Celebration
           show={done}
