@@ -9,14 +9,24 @@ Deployed at: **https://mkb-123.github.io/love2read/**
 
 - **Red level decks**: phonics (single letter sounds), tricky words, Biff/Chip
   & Kipper character names, picture words (cat, dog, sun, …)
-- **Three play modes per deck**:
-  - Flashcards — tap "Know it!" or "Try again"
+- **Today's Practice**: one big button on the home screen that builds a
+  10-card session from the spaced-repetition queue across *all* decks —
+  due words first, with a few new ones mixed in
+- **Play modes per deck**:
+  - Flashcards — read together, tap to advance
   - Pick the Word — see a picture, choose the matching word
-  - Match Pairs — memory game pairing word ↔ picture
+  - Pick the Picture — see a word, choose the matching picture
+  - Read Sentences — sentence decks show short sentences read word by word
+    with a tap-along highlight
+- **Sticker book**: finishing a session wins a random sticker; collect all
+  42 in My Stickers
 - **Rewards**: star bursts, streak counter, full-screen celebration on
   completion (with the child's name)
 - **Progress** persisted in `localStorage` (per device)
-- **Parents page**: set the child's name, reset progress
+- **Parents page**: set the child's name, per-word stats, reset progress
+- **Installable PWA**: works offline and can be added to a tablet home
+  screen like a real app (icons live in `public/`, regenerate with
+  `node scripts/generate-icons.mjs`)
 
 ## Run locally
 

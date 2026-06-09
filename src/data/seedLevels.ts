@@ -1,4 +1,25 @@
-import type { Level } from '../lib/types';
+import type { Deck, Level } from '../lib/types';
+
+// Short sentences built from her Stage 2 words. Added to existing
+// installs by a one-off migration in deckStore.
+export const SENTENCES_DECK: Deck = {
+  id: 'little-sentences',
+  title: 'Little Sentences',
+  description: 'Read a whole sentence!',
+  emoji: '📖',
+  color: 'bg-emerald-500',
+  kind: 'sentences',
+  cards: [
+    { id: 'red.little-sentences.cat', word: 'The cat is black.', emoji: '🐱' },
+    { id: 'red.little-sentences.dragon', word: 'A little red dragon.', emoji: '🐉' },
+    { id: 'red.little-sentences.bear', word: 'The bear is little.', emoji: '🐻' },
+    { id: 'red.little-sentences.pirate', word: 'I can see a pirate.', emoji: '🏴‍☠️' },
+    { id: 'red.little-sentences.monster', word: 'The monster is green.', emoji: '👹' },
+    { id: 'red.little-sentences.kangaroo', word: 'A little blue kangaroo.', emoji: '🦘' },
+    { id: 'red.little-sentences.sun', word: 'Look at the yellow sun.', emoji: '☀️' },
+    { id: 'red.little-sentences.dog', word: 'The cat and the dog.', emoji: '🐶' },
+  ],
+};
 
 // Seeded into localStorage on first run. After that, the in-app deck editor
 // (Parents → Manage decks) is the source of truth.
@@ -32,6 +53,7 @@ export const SEED_LEVELS: Level[] = [
           { id: 'red.her-words.kangaroo', word: 'kangaroo', emoji: '🦘' },
         ],
       },
+      SENTENCES_DECK,
     ],
   },
   {

@@ -30,8 +30,10 @@ export function useLevels() {
   return {
     levels,
     addDeck: useCallback(
-      (levelId: string, data: { title: string; emoji?: string }) =>
-        persist(addDeck(levels, levelId, data)),
+      (
+        levelId: string,
+        data: { title: string; emoji?: string; kind?: Deck['kind'] },
+      ) => persist(addDeck(levels, levelId, data)),
       [levels, persist],
     ),
     updateDeck: useCallback(

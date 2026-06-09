@@ -13,6 +13,8 @@ export interface Deck {
   description: string;
   emoji: string;
   color: string;
+  /** 'words' (default) shows flashcards and quiz games; 'sentences' shows guided sentence reading. */
+  kind?: 'words' | 'sentences';
   cards: Card[];
 }
 

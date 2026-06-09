@@ -1,20 +1,61 @@
 import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { useChildName } from '../hooks/useChildName';
 import { useLevels } from '../hooks/useLevels';
+import { isDue } from '../lib/progress';
+import { earnedCount, loadStickers, STICKERS } from '../lib/stickers';
 
 export function Home() {
   const { progress } = useProgress();
   const { displayName } = useChildName();
   const { levels } = useLevels();
+
+  const dueCount = useMemo(() => {
+    const cards = levels.flatMap((l) =>
+      l.decks
+        .filter((d) => d.kind !== 'sentences')
+        .flatMap((d) => d.cards),
+    );
+    return cards.filter((c) => isDue(progress, c.id)).length;
+  }, [levels, progress]);
+
+  const stickers = useMemo(() => earnedCount(loadStickers()), []);
+
   return (
     <div className="min-h-dvh p-6 md:p-10 max-w-7xl mx-auto">
       <h1 className="text-5xl md:text-7xl font-extrabold text-slate-800 text-center mb-2">
         love2read 💖
       </h1>
-      <p className="text-center text-2xl md:text-3xl text-slate-600 mb-10">
+      <p className="text-center text-2xl md:text-3xl text-slate-600 mb-8">
         Hello, {displayName}! Pick a deck.
       </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
+        <Link
+          to="/practice"
+          className="block rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 p-8 shadow-xl active:scale-95 transition-transform text-white focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
+        >
+          <div className="text-6xl md:text-7xl mb-2">⭐</div>
+          <div className="text-3xl md:text-4xl font-extrabold">
+            Today's Practice
+          </div>
+          <div className="text-lg md:text-xl opacity-90">
+            {dueCount > 0
+              ? `${Math.min(dueCount, 10)} words ready for you`
+              : 'All caught up — play anyway!'}
+          </div>
+        </Link>
+        <Link
+          to="/stickers"
+          className="block rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 p-8 shadow-xl active:scale-95 transition-transform text-white focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
+        >
+          <div className="text-6xl md:text-7xl mb-2">📒</div>
+          <div className="text-3xl md:text-4xl font-extrabold">My Stickers</div>
+          <div className="text-lg md:text-xl opacity-90">
+            {stickers} of {STICKERS.length} collected
+          </div>
+        </Link>
+      </div>
       <div className="space-y-12">
         {levels.map((level) => (
           <section key={level.id}>
@@ -30,10 +71,14 @@ export function Home() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {level.decks.map((deck) => {
-                  const mastered = deck.cards.filter(
-                    (c) => (progress[c.id]?.box ?? 0) >= 5,
+                  const isSentences = deck.kind === 'sentences';
+                  const mastered = deck.cards.filter((c) =>
+                    isSentences
+                      ? (progress[c.id]?.seen ?? 0) > 0
+                      : (progress[c.id]?.box ?? 0) >= 5,
                   ).length;
                   const learning = deck.cards.filter((c) => {
+                    if (isSentences) return false;
                     const b = progress[c.id]?.box ?? 0;
                     return b >= 1 && b < 5;
                   }).length;
@@ -59,7 +104,9 @@ export function Home() {
                         />
                       </div>
                       <div className="text-base md:text-lg mt-2 opacity-90">
-                        {mastered} mastered · {learning} learning · {total} total
+                        {isSentences
+                          ? `${mastered} of ${total} read`
+                          : `${mastered} mastered · ${learning} learning · ${total} total`}
                       </div>
                     </Link>
                   );
