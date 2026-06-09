@@ -1,65 +1,63 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { findDeck, getAllLevels } from '../content';
+import { getAllLevels } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
+import { BigEmoji } from '../components/BigEmoji';
+import { CardFace } from '../components/CardFace';
 import { Celebration } from '../components/Celebration';
+import { Button } from '../components/Button';
 import { useProgress } from '../hooks/useProgress';
 import { useSessionSticker } from '../hooks/useSessionSticker';
 import { shuffle } from '../lib/random';
 import type { Card } from '../lib/types';
 
-function buildRounds(cards: Card[]): Card[] {
-  return shuffle(cards.filter((c) => !!c.emoji));
+const SESSION_SIZE = 10;
+const NEW_PER_SESSION = 3;
+
+export function allPracticeCards(): Card[] {
+  return getAllLevels().flatMap((l) =>
+    l.decks
+      .filter((d) => d.kind !== 'sentences')
+      .flatMap((d) => d.cards),
+  );
 }
 
-function buildChoices(target: Card, deck: { cards: Card[] }): Card[] {
+function buildChoices(target: Card, pool: Card[]): Card[] {
   const usedWords = new Set<string>([target.word]);
   const picked: Card[] = [];
-
-  for (const c of shuffle(deck.cards)) {
+  for (const c of shuffle(pool)) {
     if (picked.length >= 2) break;
-    if (c.emoji && !usedWords.has(c.word)) {
+    if (!usedWords.has(c.word)) {
       picked.push(c);
       usedWords.add(c.word);
-    }
-  }
-  if (picked.length < 2) {
-    const all = getAllLevels().flatMap((l) => l.decks.flatMap((d) => d.cards));
-    for (const c of shuffle(all)) {
-      if (picked.length >= 2) break;
-      if (c.emoji && !usedWords.has(c.word)) {
-        picked.push(c);
-        usedWords.add(c.word);
-      }
     }
   }
   return shuffle([target, ...picked]);
 }
 
-export function PickThePicture() {
-  const { levelId, deckId } = useParams<{ levelId: string; deckId: string }>();
+export function Practice() {
   const nav = useNavigate();
-  const { deck } = useMemo(
-    () => findDeck(levelId ?? '', deckId ?? ''),
-    [levelId, deckId],
-  );
   const { progress, correct, wrong } = useProgress();
   const [seed, setSeed] = useState(0);
 
+  const allCards = useMemo(() => allPracticeCards(), []);
+
+  // Session picked once from the spaced-repetition queue; answering
+  // updates progress but must not reshuffle the running session.
   const rounds = useMemo(() => {
-    if (!deck) return [];
+    const byId = new Map(allCards.map((c) => [c.id, c]));
     const ids = selectSession(
-      deck.cards.map((c) => c.id),
+      allCards.map((c) => c.id),
       progress,
-      { sessionSize: deck.cards.length, newPerSession: deck.cards.length },
+      { sessionSize: SESSION_SIZE, newPerSession: NEW_PER_SESSION },
     );
-    const idSet = new Set(ids);
-    const eligible = deck.cards.filter((c) => idSet.has(c.id) && !!c.emoji);
-    return buildRounds(eligible);
+    return ids
+      .map((id) => byId.get(id))
+      .filter((c): c is Card => !!c);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deck, seed]);
+  }, [allCards, seed]);
 
   const [roundIdx, setRoundIdx] = useState(0);
   const [wrongId, setWrongId] = useState<string | null>(null);
@@ -67,10 +65,11 @@ export function PickThePicture() {
   const shownAt = useRef<number>(Date.now());
 
   const current = rounds[roundIdx];
+  const isQuiz = !!current?.emoji;
   const choices = useMemo(
-    () => (current && deck ? buildChoices(current, deck) : []),
+    () => (current && isQuiz ? buildChoices(current, allCards) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [current, deck, seed],
+    [current, seed],
   );
 
   useEffect(() => {
@@ -87,20 +86,14 @@ export function PickThePicture() {
   const done = rounds.length > 0 && roundIdx >= rounds.length;
   const sticker = useSessionSticker(done);
 
-  if (!deck) {
-    return (
-      <Layout>
-        <p className="p-6 text-2xl">Deck not found.</p>
-      </Layout>
-    );
-  }
-
   if (rounds.length === 0) {
     return (
       <Layout>
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <p className="text-3xl text-slate-700">
-            Need more cards with pictures for this game.
+          <div className="text-8xl mb-4">🌈</div>
+          <p className="text-3xl text-slate-700">No words to practise yet.</p>
+          <p className="text-slate-500 mt-2">
+            Add some words from the Parents page first.
           </p>
         </div>
       </Layout>
@@ -121,6 +114,18 @@ export function PickThePicture() {
     }
   };
 
+  const handleReadIt = (gotIt: boolean) => {
+    if (!current) return;
+    if (gotIt) {
+      correct(current.id);
+      setStreak((s) => s + 1);
+    } else {
+      wrong(current.id);
+      setStreak(0);
+    }
+    setRoundIdx((i) => i + 1);
+  };
+
   const restart = () => {
     setSeed((s) => s + 1);
     setRoundIdx(0);
@@ -136,41 +141,69 @@ export function PickThePicture() {
           </span>
           <span className="font-bold text-orange-600">🔥 {streak}</span>
         </div>
-        {!done && current && (
+        {!done && current && isQuiz && (
           <>
             <div className="flex-1 flex items-center justify-center relative">
               <motion.div
                 key={current.id}
                 initial={{ scale: 0.7, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="bg-white rounded-[2rem] shadow-2xl px-12 py-10 md:px-20 md:py-14"
+                className="bg-white rounded-[2rem] shadow-2xl p-8 md:p-12"
               >
-                <div className="text-7xl md:text-9xl font-extrabold text-slate-800 leading-none tracking-wide">
-                  {current.word}
-                </div>
+                <BigEmoji emoji={current.emoji} size="xl" />
               </motion.div>
             </div>
-            <div className="grid grid-cols-3 gap-3 md:gap-4 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
               {choices.map((c) => (
                 <motion.button
                   key={c.id}
                   onClick={() => handlePick(c)}
                   animate={wrongId === c.id ? { x: [0, -16, 16, -10, 10, 0] } : { x: 0 }}
                   transition={{ duration: 0.4 }}
-                  className={`aspect-square rounded-3xl shadow-lg bg-white text-6xl md:text-8xl flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
+                  className={`min-h-[88px] py-6 px-4 rounded-3xl bg-white shadow-lg text-5xl md:text-6xl font-extrabold text-slate-800 active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
                     wrongId === c.id ? 'bg-amber-100' : ''
                   }`}
-                  aria-label={c.word}
                 >
-                  {c.emoji}
+                  {c.word}
                 </motion.button>
               ))}
             </div>
           </>
         )}
+        {!done && current && !isQuiz && (
+          <>
+            <div className="flex-1 flex items-center justify-center relative">
+              <motion.div
+                key={current.id}
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl"
+              >
+                <CardFace card={current} mode="word" />
+              </motion.div>
+            </div>
+            <p className="text-center text-slate-500 text-lg md:text-xl mt-6">
+              Read it out loud, then a grown-up taps:
+            </p>
+            <div className="grid grid-cols-2 gap-4 mt-3">
+              <Button
+                onClick={() => handleReadIt(false)}
+                className="bg-amber-400 text-amber-950"
+              >
+                Tricky 🤔
+              </Button>
+              <Button
+                onClick={() => handleReadIt(true)}
+                className="bg-emerald-500 text-white"
+              >
+                Read it! ⭐
+              </Button>
+            </div>
+          </>
+        )}
         <Celebration
           show={done}
-          message="Brilliant reading"
+          message="Practice done"
           sticker={sticker}
           onAgain={restart}
           onHome={() => nav('/')}

@@ -38,27 +38,38 @@ export function DeckDetail() {
           {deck.description} · {deck.cards.length} cards
         </p>
         <div className="flex flex-col gap-5 w-full md:max-w-md">
-          <Button
-            onClick={() => nav(`${base}/flashcards`)}
-            className="bg-rose-500 text-white"
-          >
-            📖 Read together
-          </Button>
-          <p className="text-slate-500 text-center text-base md:text-lg -mt-2">
-            Tests below — these update her progress
-          </p>
-          <Button
-            onClick={() => nav(`${base}/pick`)}
-            className="bg-amber-500 text-white"
-          >
-            🎯 Pick the Word
-          </Button>
-          <Button
-            onClick={() => nav(`${base}/pick-picture`)}
-            className="bg-orange-500 text-white"
-          >
-            🖼️ Pick the Picture
-          </Button>
+          {deck.kind === 'sentences' ? (
+            <Button
+              onClick={() => nav(`${base}/sentences`)}
+              className="bg-emerald-500 text-white"
+            >
+              📖 Read sentences
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={() => nav(`${base}/flashcards`)}
+                className="bg-rose-500 text-white"
+              >
+                📖 Read together
+              </Button>
+              <p className="text-slate-500 text-center text-base md:text-lg -mt-2">
+                Tests below — these update her progress
+              </p>
+              <Button
+                onClick={() => nav(`${base}/pick`)}
+                className="bg-amber-500 text-white"
+              >
+                🎯 Pick the Word
+              </Button>
+              <Button
+                onClick={() => nav(`${base}/pick-picture`)}
+                className="bg-orange-500 text-white"
+              >
+                🖼️ Pick the Picture
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </Layout>

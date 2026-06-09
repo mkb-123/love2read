@@ -7,6 +7,7 @@ import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
+import { useSessionSticker } from '../hooks/useSessionSticker';
 import { shuffle } from '../lib/random';
 import type { Card } from '../lib/types';
 
@@ -84,6 +85,9 @@ export function PickTheWord() {
     }
   }, [wrongId]);
 
+  const done = rounds.length > 0 && roundIdx >= rounds.length;
+  const sticker = useSessionSticker(done);
+
   if (!deck) {
     return (
       <Layout>
@@ -120,8 +124,6 @@ export function PickTheWord() {
       setWrongId(c.id);
     }
   };
-
-  const done = roundIdx >= rounds.length;
 
   const restart = () => {
     setSeed((s) => s + 1);
@@ -170,6 +172,7 @@ export function PickTheWord() {
         <Celebration
           show={done}
           message="Awesome work"
+          sticker={sticker}
           onAgain={restart}
           onHome={() => nav('/')}
         />
