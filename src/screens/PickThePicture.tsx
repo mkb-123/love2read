@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { findDeck, getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
+import { EmojiImage } from '../components/EmojiImage';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
 import { useSessionSticker } from '../hooks/useSessionSticker';
@@ -166,7 +167,7 @@ export function PickThePicture() {
                   }`}
                   aria-label={c.word}
                 >
-                  {c.emoji}
+                  {c.emoji && <EmojiImage emoji={c.emoji} />}
                 </motion.button>
               ))}
             </div>

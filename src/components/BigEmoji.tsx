@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { EmojiImage } from './EmojiImage';
 
 export function BigEmoji({
   emoji,
@@ -25,7 +26,7 @@ export function BigEmoji({
       )}
       aria-hidden
     >
-      {emoji}
+      <EmojiImage emoji={emoji} />
     </div>
   );
 }

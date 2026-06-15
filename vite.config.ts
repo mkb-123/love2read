@@ -50,6 +50,16 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            // Crisp Twemoji SVGs — cache so the app stays fully offline.
+            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/jdecked\/twemoji.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'twemoji-svg',
+              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
     }),

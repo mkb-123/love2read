@@ -70,6 +70,22 @@ export function Home() {
               </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {level.decks.some((d) => d.kind !== 'sentences') && (
+                  <Link
+                    to={`/play/${level.id}`}
+                    className="block rounded-3xl bg-white border-4 border-dashed border-slate-200 p-8 shadow-xl active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
+                  >
+                    <div className="text-6xl md:text-7xl mb-2">🎮</div>
+                    <div
+                      className={`text-3xl md:text-4xl font-extrabold ${level.color}`}
+                    >
+                      Play all words
+                    </div>
+                    <div className="text-lg md:text-xl text-slate-600">
+                      Every word in {level.label} in one game
+                    </div>
+                  </Link>
+                )}
                 {level.decks.map((deck) => {
                   const isSentences = deck.kind === 'sentences';
                   const mastered = deck.cards.filter((c) =>
