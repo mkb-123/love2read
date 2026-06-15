@@ -4,7 +4,6 @@ import { DeckDetail } from './screens/DeckDetail';
 import { Flashcards } from './screens/Flashcards';
 import { PickTheWord } from './screens/PickTheWord';
 import { PickThePicture } from './screens/PickThePicture';
-import { Practice } from './screens/Practice';
 import { ReadSentences } from './screens/ReadSentences';
 import { StickerBook } from './screens/StickerBook';
 import { Parents } from './screens/Parents';
@@ -15,8 +14,6 @@ export function Router() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/practice" element={<Practice />} />
-        <Route path="/play/:levelId" element={<Practice />} />
         <Route path="/stickers" element={<StickerBook />} />
         <Route path="/deck/:levelId/:deckId" element={<DeckDetail />} />
         <Route

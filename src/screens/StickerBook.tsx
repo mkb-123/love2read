@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Layout } from '../components/Layout';
-import { EmojiImage } from '../components/EmojiImage';
 import { STICKERS, earnedCount, loadStickers } from '../lib/stickers';
 
 export function StickerBook() {
@@ -36,7 +35,7 @@ export function StickerBook() {
                 {got ? (
                   <>
                     <span className="text-5xl md:text-6xl leading-none">
-                      <EmojiImage emoji={s.emoji} />
+                      {s.emoji}
                     </span>
                     <span className="text-xs md:text-sm font-bold text-slate-600 text-center px-1">
                       {s.name}

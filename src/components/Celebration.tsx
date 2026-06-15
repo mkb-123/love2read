@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useChildName } from '../hooks/useChildName';
 import type { Sticker } from '../lib/stickers';
 import { StarBurst } from './StarBurst';
-import { EmojiImage } from './EmojiImage';
 import { Button } from './Button';
 
 export function Celebration({
@@ -53,9 +52,7 @@ export function Celebration({
                 sticker.special ? 'ring-4 ring-amber-400' : ''
               }`}
             >
-              <span className="text-7xl md:text-8xl">
-                <EmojiImage emoji={sticker.emoji} />
-              </span>
+              <span className="text-7xl md:text-8xl">{sticker.emoji}</span>
               <span className="text-left">
                 <span className="block text-lg md:text-xl text-slate-500 font-bold uppercase tracking-wide">
                   {sticker.special ? '🏆 Achievement!' : 'New sticker!'}

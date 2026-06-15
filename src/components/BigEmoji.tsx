@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { EmojiImage } from './EmojiImage';
 
 export function BigEmoji({
   emoji,
@@ -14,19 +13,15 @@ export function BigEmoji({
   const sizes = {
     sm: 'text-6xl',
     md: 'text-8xl',
-    lg: 'text-[8rem] md:text-[12rem]',
-    xl: 'text-[10rem] md:text-[16rem]',
+    lg: 'text-9xl md:text-[10rem]',
+    xl: 'text-[8rem] md:text-[12rem]',
   };
   return (
     <div
-      className={clsx(
-        'leading-none select-none',
-        sizes[size],
-        className,
-      )}
+      className={clsx('leading-none select-none', sizes[size], className)}
       aria-hidden
     >
-      <EmojiImage emoji={emoji} />
+      {emoji}
     </div>
   );
 }

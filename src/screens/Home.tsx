@@ -3,22 +3,12 @@ import { useMemo } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { useChildName } from '../hooks/useChildName';
 import { useLevels } from '../hooks/useLevels';
-import { isDue } from '../lib/progress';
 import { earnedCount, loadStickers, STICKERS } from '../lib/stickers';
 
 export function Home() {
   const { progress } = useProgress();
   const { displayName } = useChildName();
   const { levels } = useLevels();
-
-  const dueCount = useMemo(() => {
-    const cards = levels.flatMap((l) =>
-      l.decks
-        .filter((d) => d.kind !== 'sentences')
-        .flatMap((d) => d.cards),
-    );
-    return cards.filter((c) => isDue(progress, c.id)).length;
-  }, [levels, progress]);
 
   const stickers = useMemo(() => earnedCount(loadStickers()), []);
 
@@ -30,21 +20,7 @@ export function Home() {
       <p className="text-center text-2xl md:text-3xl text-slate-600 mb-8">
         Hello, {displayName}! Pick a deck.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
-        <Link
-          to="/practice"
-          className="block rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 p-8 shadow-xl active:scale-95 transition-transform text-white focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
-        >
-          <div className="text-6xl md:text-7xl mb-2">⭐</div>
-          <div className="text-3xl md:text-4xl font-extrabold">
-            Today's Practice
-          </div>
-          <div className="text-lg md:text-xl opacity-90">
-            {dueCount > 0
-              ? `${Math.min(dueCount, 10)} words ready for you`
-              : 'All caught up — play anyway!'}
-          </div>
-        </Link>
+      <div className="mb-12 max-w-md mx-auto">
         <Link
           to="/stickers"
           className="block rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 p-8 shadow-xl active:scale-95 transition-transform text-white focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
@@ -70,22 +46,6 @@ export function Home() {
               </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {level.decks.some((d) => d.kind !== 'sentences') && (
-                  <Link
-                    to={`/play/${level.id}`}
-                    className="block rounded-3xl bg-white border-4 border-dashed border-slate-200 p-8 shadow-xl active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation"
-                  >
-                    <div className="text-6xl md:text-7xl mb-2">🎮</div>
-                    <div
-                      className={`text-3xl md:text-4xl font-extrabold ${level.color}`}
-                    >
-                      Play all words
-                    </div>
-                    <div className="text-lg md:text-xl text-slate-600">
-                      Every word in {level.label} in one game
-                    </div>
-                  </Link>
-                )}
                 {level.decks.map((deck) => {
                   const isSentences = deck.kind === 'sentences';
                   const mastered = deck.cards.filter((c) =>
