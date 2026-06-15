@@ -86,7 +86,7 @@ export function PickTheWord() {
   }, [wrongId]);
 
   const done = rounds.length > 0 && roundIdx >= rounds.length;
-  const sticker = useSessionSticker(done);
+  const sticker = useSessionSticker(done, { sessionStreak: streak });
 
   if (!deck) {
     return (

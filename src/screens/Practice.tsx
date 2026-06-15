@@ -96,7 +96,7 @@ export function Practice() {
   }, [wrongId]);
 
   const done = rounds.length > 0 && roundIdx >= rounds.length;
-  const sticker = useSessionSticker(done);
+  const sticker = useSessionSticker(done, { sessionStreak: streak });
 
   if (rounds.length === 0) {
     return (
