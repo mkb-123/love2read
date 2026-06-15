@@ -13,9 +13,6 @@ import { useSessionSticker } from '../hooks/useSessionSticker';
 import { shuffle } from '../lib/random';
 import type { Card } from '../lib/types';
 
-const SESSION_SIZE = 10;
-const NEW_PER_SESSION = 3;
-
 export function allPracticeCards(levelId?: string): Card[] {
   return getAllLevels()
     .filter((l) => !levelId || l.id === levelId)
@@ -41,9 +38,8 @@ function buildChoices(target: Card, pool: Card[]): Card[] {
 
 export function Practice() {
   const nav = useNavigate();
-  // When a levelId is present (route `/play/:levelId`) the game covers every
-  // word in that one level; otherwise it's the mixed daily-practice queue.
-  const { levelId } = useParams<{ levelId?: string }>();
+  // The game (route `/play/:levelId`) covers every word in one level.
+  const { levelId } = useParams<{ levelId: string }>();
   const { progress, correct, wrong } = useProgress();
   const [seed, setSeed] = useState(0);
 
@@ -53,18 +49,14 @@ export function Practice() {
     return [...byId.values()];
   }, [levelId]);
 
-  // Session picked once from the spaced-repetition queue; answering
-  // updates progress but must not reshuffle the running session. For a
-  // single-level game we include every word; the daily queue stays capped.
+  // Cards ordered once via the spaced-repetition queue (least-known first);
+  // answering updates progress but must not reshuffle the running game.
   const rounds = useMemo(() => {
     const byId = new Map(allCards.map((c) => [c.id, c]));
-    const ids = selectSession(
-      allCards.map((c) => c.id),
-      progress,
-      levelId
-        ? { sessionSize: allCards.length, newPerSession: allCards.length }
-        : { sessionSize: SESSION_SIZE, newPerSession: NEW_PER_SESSION },
-    );
+    const ids = selectSession(allCards.map((c) => c.id), progress, {
+      sessionSize: allCards.length,
+      newPerSession: allCards.length,
+    });
     return ids
       .map((id) => byId.get(id))
       .filter((c): c is Card => !!c);
@@ -96,7 +88,7 @@ export function Practice() {
   }, [wrongId]);
 
   const done = rounds.length > 0 && roundIdx >= rounds.length;
-  const sticker = useSessionSticker(done);
+  const sticker = useSessionSticker(done, { sessionStreak: streak });
 
   if (rounds.length === 0) {
     return (

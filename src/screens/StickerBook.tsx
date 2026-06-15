@@ -30,7 +30,7 @@ export function StickerBook() {
                 transition={{ delay: Math.min(i * 0.03, 1), type: 'spring', damping: 14 }}
                 className={`relative aspect-square rounded-3xl flex flex-col items-center justify-center gap-1 shadow-lg ${
                   got ? 'bg-white' : 'bg-white/40'
-                }`}
+                } ${got && s.special ? 'ring-4 ring-amber-400' : ''}`}
               >
                 {got ? (
                   <>

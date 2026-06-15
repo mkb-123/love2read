@@ -9,17 +9,22 @@ Deployed at: **https://mkb-123.github.io/love2read/**
 
 - **Red level decks**: phonics (single letter sounds), tricky words, Biff/Chip
   & Kipper character names, picture words (cat, dog, sun, …)
-- **Today's Practice**: one big button on the home screen that builds a
-  10-card session from the spaced-repetition queue across *all* decks —
-  due words first, with a few new ones mixed in
+- **Word Games**: one game per level ("Red words", "Blue words", …) that
+  covers *every* word in that level, ordered by the spaced-repetition queue
+  (least-known first). The individual decks sit in a separate "More Games"
+  section below.
+- **Words coloured by level** so red-level words read in red and blue-level
+  words in blue
 - **Play modes per deck**:
   - Flashcards — read together, tap to advance
   - Pick the Word — see a picture, choose the matching word
   - Pick the Picture — see a word, choose the matching picture
   - Read Sentences — sentence decks show short sentences read word by word
     with a tap-along highlight
-- **Sticker book**: finishing a session wins a random sticker; collect all
-  42 in My Stickers
+- **Sticker book**: finishing a game wins a random sticker, or a special
+  **milestone sticker** for an achievement (first word mastered, a deck
+  completed, day streaks, a hot in-game streak); collect all 48 in My
+  Stickers
 - **Rewards**: star bursts, streak counter, full-screen celebration on
   completion (with the child's name)
 - **Progress** persisted in `localStorage` (per device)

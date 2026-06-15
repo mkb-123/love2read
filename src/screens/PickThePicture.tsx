@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { findDeck, getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
-import { EmojiImage } from '../components/EmojiImage';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
 import { useSessionSticker } from '../hooks/useSessionSticker';
@@ -86,7 +85,7 @@ export function PickThePicture() {
   }, [wrongId]);
 
   const done = rounds.length > 0 && roundIdx >= rounds.length;
-  const sticker = useSessionSticker(done);
+  const sticker = useSessionSticker(done, { sessionStreak: streak });
 
   if (!deck) {
     return (
@@ -167,7 +166,7 @@ export function PickThePicture() {
                   }`}
                   aria-label={c.word}
                 >
-                  {c.emoji && <EmojiImage emoji={c.emoji} />}
+                  {c.emoji}
                 </motion.button>
               ))}
             </div>

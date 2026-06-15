@@ -48,12 +48,14 @@ export function Celebration({
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 10, delay: 0.4 }}
-              className="mt-8 bg-white rounded-3xl shadow-2xl px-8 py-5 flex items-center gap-4 active:scale-95 transition-transform touch-manipulation"
+              className={`mt-8 bg-white rounded-3xl shadow-2xl px-8 py-5 flex items-center gap-4 active:scale-95 transition-transform touch-manipulation ${
+                sticker.special ? 'ring-4 ring-amber-400' : ''
+              }`}
             >
               <span className="text-7xl md:text-8xl">{sticker.emoji}</span>
               <span className="text-left">
                 <span className="block text-lg md:text-xl text-slate-500 font-bold uppercase tracking-wide">
-                  New sticker!
+                  {sticker.special ? '🏆 Achievement!' : 'New sticker!'}
                 </span>
                 <span className="block text-3xl md:text-4xl font-extrabold text-slate-800">
                   {sticker.name}
