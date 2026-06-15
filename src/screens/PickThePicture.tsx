@@ -5,6 +5,7 @@ import { findDeck, getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { Celebration } from '../components/Celebration';
+import { TryAgainCue } from '../components/TryAgainCue';
 import { useProgress } from '../hooks/useProgress';
 import { useSessionSticker } from '../hooks/useSessionSticker';
 import { shuffle } from '../lib/random';
@@ -159,10 +160,10 @@ export function PickThePicture() {
                 <motion.button
                   key={c.id}
                   onClick={() => handlePick(c)}
-                  animate={wrongId === c.id ? { x: [0, -16, 16, -10, 10, 0] } : { x: 0 }}
-                  transition={{ duration: 0.4 }}
+                  animate={wrongId === c.id ? { x: [0, -8, 8, -6, 6, 0] } : { x: 0 }}
+                  transition={{ duration: 0.5 }}
                   className={`aspect-square rounded-3xl shadow-lg bg-white text-6xl md:text-8xl flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
-                    wrongId === c.id ? 'bg-amber-100' : ''
+                    wrongId === c.id ? 'bg-amber-50 opacity-60' : ''
                   }`}
                   aria-label={c.word}
                 >
@@ -172,6 +173,7 @@ export function PickThePicture() {
             </div>
           </>
         )}
+        <TryAgainCue show={!!wrongId} />
         <Celebration
           show={done}
           message="Brilliant reading"
