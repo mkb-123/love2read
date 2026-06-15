@@ -9,6 +9,10 @@ Deployed at: **https://mkb-123.github.io/love2read/**
 
 - **Red level decks**: phonics (single letter sounds), tricky words, Biff/Chip
   & Kipper character names, picture words (cat, dog, sun, …)
+- **Word Games**: one game per level ("Red words", "Blue words", …) that
+  covers *every* word in that level, ordered by the spaced-repetition queue
+  (least-known first). The individual decks sit in a separate "More Games"
+  section below.
 - **Words coloured by level** so red-level words read in red and blue-level
   words in blue
 - **Play modes per deck**:
