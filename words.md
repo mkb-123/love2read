@@ -8,6 +8,6 @@ must match it exactly: no extra words, no made-up words, no emojis.
 red, giant, cat, in, kangaroo, yellow, the, monster, my, black, dog, I, went,
 green, like, new, am, a, pirates, elephant, bear, blue, pig, little, dragon, and
 
-## Blue words
+## Blue words (8)
 
-_To be confirmed._
+they, on, said, is, want, look, we, he
