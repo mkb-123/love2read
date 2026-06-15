@@ -85,6 +85,13 @@ export const SEED_LEVELS: Level[] = [
           { id: 'blue.tricky-words.what', word: 'what' },
           { id: 'blue.tricky-words.their', word: 'their' },
           { id: 'blue.tricky-words.people', word: 'people', emoji: '👥' },
+          { id: 'blue.tricky-words.they', word: 'they' },
+          { id: 'blue.tricky-words.on', word: 'on' },
+          { id: 'blue.tricky-words.is', word: 'is' },
+          { id: 'blue.tricky-words.want', word: 'want' },
+          { id: 'blue.tricky-words.look', word: 'look', emoji: '👀' },
+          { id: 'blue.tricky-words.we', word: 'we' },
+          { id: 'blue.tricky-words.he', word: 'he' },
         ],
       },
       {
