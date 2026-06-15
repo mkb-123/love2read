@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import type { Card } from '../lib/types';
+import { levelColorForCardId } from '../content';
 import { BigEmoji } from './BigEmoji';
 
 export function CardFace({
@@ -20,7 +21,12 @@ export function CardFace({
     >
       {mode !== 'word' && card.emoji && <BigEmoji emoji={card.emoji} />}
       {mode !== 'emoji' && (
-        <div className="text-7xl md:text-9xl font-extrabold text-slate-800 tracking-wide leading-none">
+        <div
+          className={clsx(
+            'text-7xl md:text-9xl font-extrabold tracking-wide leading-none',
+            levelColorForCardId(card.id),
+          )}
+        >
           {card.word}
         </div>
       )}

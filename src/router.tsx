@@ -16,6 +16,7 @@ export function Router() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/practice" element={<Practice />} />
+        <Route path="/play/:levelId" element={<Practice />} />
         <Route path="/stickers" element={<StickerBook />} />
         <Route path="/deck/:levelId/:deckId" element={<DeckDetail />} />
         <Route

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { findDeck, getAllLevels } from '../content';
+import { findDeck, getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
@@ -159,7 +159,9 @@ export function PickTheWord() {
                   onClick={() => handlePick(c)}
                   animate={wrongId === c.id ? { x: [0, -16, 16, -10, 10, 0] } : { x: 0 }}
                   transition={{ duration: 0.4 }}
-                  className={`min-h-[88px] py-6 px-4 rounded-3xl bg-white shadow-lg text-5xl md:text-6xl font-extrabold text-slate-800 active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
+                  className={`min-h-[88px] py-6 px-4 rounded-3xl bg-white shadow-lg text-5xl md:text-6xl font-extrabold ${levelColorForCardId(
+                    c.id,
+                  )} active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
                     wrongId === c.id ? 'bg-amber-100' : ''
                   }`}
                 >

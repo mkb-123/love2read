@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getAllLevels } from '../content';
+import { getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
 import { BigEmoji } from '../components/BigEmoji';
@@ -16,12 +16,14 @@ import type { Card } from '../lib/types';
 const SESSION_SIZE = 10;
 const NEW_PER_SESSION = 3;
 
-export function allPracticeCards(): Card[] {
-  return getAllLevels().flatMap((l) =>
-    l.decks
-      .filter((d) => d.kind !== 'sentences')
-      .flatMap((d) => d.cards),
-  );
+export function allPracticeCards(levelId?: string): Card[] {
+  return getAllLevels()
+    .filter((l) => !levelId || l.id === levelId)
+    .flatMap((l) =>
+      l.decks
+        .filter((d) => d.kind !== 'sentences')
+        .flatMap((d) => d.cards),
+    );
 }
 
 function buildChoices(target: Card, pool: Card[]): Card[] {
@@ -39,19 +41,29 @@ function buildChoices(target: Card, pool: Card[]): Card[] {
 
 export function Practice() {
   const nav = useNavigate();
+  // When a levelId is present (route `/play/:levelId`) the game covers every
+  // word in that one level; otherwise it's the mixed daily-practice queue.
+  const { levelId } = useParams<{ levelId?: string }>();
   const { progress, correct, wrong } = useProgress();
   const [seed, setSeed] = useState(0);
 
-  const allCards = useMemo(() => allPracticeCards(), []);
+  const allCards = useMemo(() => {
+    // A card id can be reused across decks within a level; keep one per id.
+    const byId = new Map(allPracticeCards(levelId).map((c) => [c.id, c]));
+    return [...byId.values()];
+  }, [levelId]);
 
   // Session picked once from the spaced-repetition queue; answering
-  // updates progress but must not reshuffle the running session.
+  // updates progress but must not reshuffle the running session. For a
+  // single-level game we include every word; the daily queue stays capped.
   const rounds = useMemo(() => {
     const byId = new Map(allCards.map((c) => [c.id, c]));
     const ids = selectSession(
       allCards.map((c) => c.id),
       progress,
-      { sessionSize: SESSION_SIZE, newPerSession: NEW_PER_SESSION },
+      levelId
+        ? { sessionSize: allCards.length, newPerSession: allCards.length }
+        : { sessionSize: SESSION_SIZE, newPerSession: NEW_PER_SESSION },
     );
     return ids
       .map((id) => byId.get(id))
@@ -160,7 +172,9 @@ export function Practice() {
                   onClick={() => handlePick(c)}
                   animate={wrongId === c.id ? { x: [0, -16, 16, -10, 10, 0] } : { x: 0 }}
                   transition={{ duration: 0.4 }}
-                  className={`min-h-[88px] py-6 px-4 rounded-3xl bg-white shadow-lg text-5xl md:text-6xl font-extrabold text-slate-800 active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
+                  className={`min-h-[88px] py-6 px-4 rounded-3xl bg-white shadow-lg text-5xl md:text-6xl font-extrabold ${levelColorForCardId(
+                    c.id,
+                  )} active:scale-95 transition-transform focus:outline-none focus:ring-4 focus:ring-yellow-300 touch-manipulation ${
                     wrongId === c.id ? 'bg-amber-100' : ''
                   }`}
                 >

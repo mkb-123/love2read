@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { findDeck, getAllLevels } from '../content';
+import { findDeck, getAllLevels, levelColorForCardId } from '../content';
 import { selectSession } from '../lib/progress';
 import { Layout } from '../components/Layout';
+import { EmojiImage } from '../components/EmojiImage';
 import { Celebration } from '../components/Celebration';
 import { useProgress } from '../hooks/useProgress';
 import { useSessionSticker } from '../hooks/useSessionSticker';
@@ -145,7 +146,11 @@ export function PickThePicture() {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white rounded-[2rem] shadow-2xl px-12 py-10 md:px-20 md:py-14"
               >
-                <div className="text-7xl md:text-9xl font-extrabold text-slate-800 leading-none tracking-wide">
+                <div
+                  className={`text-7xl md:text-9xl font-extrabold leading-none tracking-wide ${levelColorForCardId(
+                    current.id,
+                  )}`}
+                >
                   {current.word}
                 </div>
               </motion.div>
@@ -162,7 +167,7 @@ export function PickThePicture() {
                   }`}
                   aria-label={c.word}
                 >
-                  {c.emoji}
+                  {c.emoji && <EmojiImage emoji={c.emoji} />}
                 </motion.button>
               ))}
             </div>
